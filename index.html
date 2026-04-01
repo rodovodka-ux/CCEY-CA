@@ -1,344 +1,630 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MediCard — Ma carte de vie</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-:root{--gold:#C9A84C;--gold-light:#E8C97A;--black:#0A0A0A;--dark:#141414;--dark2:#1C1C1C;--dark3:#242424;--white:#FAFAF8;--muted:#888880;--border:rgba(201,168,76,0.2);--border-h:rgba(201,168,76,0.5);--red:#C0392B;--r:4px;}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
-body{font-family:'DM Sans',sans-serif;background:var(--black);color:var(--white);min-height:100vh;overflow-x:hidden;}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 20% 10%,rgba(201,168,76,0.04) 0%,transparent 60%),radial-gradient(ellipse 60% 80% at 80% 90%,rgba(201,168,76,0.03) 0%,transparent 50%);pointer-events:none;z-index:0;}
-.hero{position:relative;padding:5rem 2rem 4rem;text-align:center;border-bottom:1px solid var(--border);overflow:hidden;}
-.hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);color:var(--gold);font-size:11px;font-weight:500;letter-spacing:.15em;text-transform:uppercase;padding:6px 16px;border-radius:20px;margin-bottom:2rem;}
-.hero-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite;}
-@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
-.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.8rem,7vw,5rem);font-weight:300;color:var(--white);line-height:1.1;margin-bottom:.5rem;}
-.hero h1 span{color:var(--gold);font-style:italic;}
-.hero-sub{font-size:15px;color:var(--muted);font-weight:300;letter-spacing:.03em;margin-bottom:3rem;}
-.steps-bar{display:flex;align-items:center;justify-content:center;max-width:500px;margin:0 auto;}
-.step-item{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;}
-.step-num{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted);transition:all .3s;}
-.step-item.active .step-num{border-color:var(--gold);background:var(--gold);color:var(--black);font-weight:500;}
-.step-item.done .step-num{border-color:var(--gold);color:var(--gold);}
-.step-lbl{font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;}
-.step-item.active .step-lbl{color:var(--gold);}
-.step-line{flex:1;height:1px;background:var(--border);max-width:40px;}
-.form-wrap{max-width:680px;margin:0 auto;padding:3rem 1.5rem 4rem;position:relative;z-index:1;}
-.section{border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:1.5rem;transition:border-color .3s;}
-.section:hover{border-color:var(--border-h);}
-.section-head{padding:1rem 1.5rem;background:var(--dark2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
-.section-icon{width:28px;height:28px;border:1px solid var(--border);border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
-.section-title{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);}
-.section-badge{margin-left:auto;font-size:9px;padding:3px 8px;border-radius:10px;letter-spacing:.08em;text-transform:uppercase;}
-.section-badge.libre{background:rgba(201,168,76,.1);color:var(--gold);border:1px solid var(--border);}
-.section-badge.prive{background:rgba(101,76,178,.15);color:#9F8FD4;border:1px solid rgba(101,76,178,.3);}
-.section-body{padding:1.5rem;background:var(--dark);}
-.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;}
-.field-grid.full{grid-template-columns:1fr;}
-.field{display:flex;flex-direction:column;gap:7px;}
-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);}
-label .req{color:var(--gold);margin-left:2px;}
-input,select,textarea{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:300;padding:11px 14px;background:var(--dark2);border:1px solid var(--border);border-radius:var(--r);color:var(--white);width:100%;transition:border-color .2s,background .2s;outline:none;appearance:none;}
-input::placeholder,textarea::placeholder{color:var(--muted);opacity:.5;}
-input:focus,select:focus,textarea:focus{border-color:var(--gold);background:var(--dark3);}
-select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;}
-textarea{resize:vertical;min-height:80px;line-height:1.6;}
-.upload-zone{border:1px dashed var(--border);border-radius:var(--r);padding:2rem;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;background:var(--dark2);position:relative;}
-.upload-zone:hover{border-color:var(--gold);background:var(--dark3);}
-.upload-zone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
-.upload-icon{font-size:2rem;margin-bottom:.5rem;opacity:.5;}
-.upload-text{font-size:13px;color:var(--muted);}
-.upload-text strong{color:var(--gold);}
-.upload-preview{display:none;width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);margin:0 auto .5rem;}
-.code-hint{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5;}
-.code-hint strong{color:var(--gold-light);}
-.divider{display:flex;align-items:center;gap:1rem;margin:1.5rem 0;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.1em;}
-.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
-.urgence-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:1rem;}
-.urgence-item{background:var(--dark2);border:1px solid var(--border);border-radius:var(--r);padding:10px;text-align:center;}
-.urgence-num{font-size:18px;font-weight:500;color:var(--red);margin-bottom:3px;}
-.urgence-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;}
-.btn-submit{width:100%;padding:16px;background:var(--gold);color:var(--black);border:none;border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .2s,transform .1s;margin-top:.5rem;display:flex;align-items:center;justify-content:center;gap:10px;}
-.btn-submit:hover{background:var(--gold-light);}
-.btn-submit:active{transform:scale(.99);}
-.btn-submit:disabled{background:var(--dark3);color:var(--muted);cursor:not-allowed;}
-.form-note{text-align:center;font-size:11px;color:var(--muted);margin-top:1.5rem;line-height:1.7;}
-.form-note span{color:var(--gold);}
-.success-screen{display:none;text-align:center;padding:4rem 2rem;}
-.success-screen.show{display:block;}
-.success-ring{width:80px;height:80px;border-radius:50%;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 2rem;font-size:2rem;}
-.success-screen h2{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;color:var(--gold);margin-bottom:.75rem;}
-.success-screen p{color:var(--muted);font-size:14px;margin-bottom:2rem;line-height:1.7;}
-.link-display{background:var(--dark2);border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.25rem;font-size:13px;color:var(--gold);word-break:break-all;margin-bottom:1rem;text-align:left;font-family:monospace;}
-.btn-copy{padding:10px 28px;background:transparent;color:var(--gold);border:1px solid var(--gold);border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;transition:background .2s,color .2s;}
-.btn-copy:hover{background:var(--gold);color:var(--black);}
-@media(max-width:520px){.field-grid{grid-template-columns:1fr;}.urgence-grid{grid-template-columns:1fr 1fr;}}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CCEY-CA — Centre de Création d'Entreprises de Yaoundé</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --vert:   #1a6635;
+      --vert2:  #0f4a24;
+      --or:     #c9941a;
+      --or2:    #e8b030;
+      --noir:   #111111;
+      --gris:   #f4f4f0;
+      --blanc:  #ffffff;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Raleway', sans-serif; color: var(--noir); background: var(--blanc); }
+
+    /* ─── NAVBAR ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(10,40,20,0.97);
+      backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%;
+      height: 72px;
+      border-bottom: 2px solid var(--or);
+    }
+    nav .logo img { height: 48px; display: block; }
+    nav ul { list-style: none; display: flex; gap: 2rem; }
+    nav ul li a {
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      font-size: .82rem;
+      font-weight: 500;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: 4px 0;
+      border-bottom: 2px solid transparent;
+      transition: color .25s, border-color .25s;
+    }
+    nav ul li a:hover { color: var(--or2); border-color: var(--or2); }
+    .burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .burger span { width: 26px; height: 2px; background: #fff; display: block; transition: .3s; }
+
+    /* ─── HERO ─── */
+    #accueil {
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--vert2) 0%, var(--vert) 60%, #2a8a48 100%);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+      padding-top: 72px;
+    }
+    .hero-pattern {
+      position: absolute; inset: 0;
+      background-image:
+        repeating-linear-gradient(60deg, transparent, transparent 40px, rgba(201,148,26,.06) 40px, rgba(201,148,26,.06) 41px),
+        repeating-linear-gradient(-60deg, transparent, transparent 40px, rgba(201,148,26,.06) 40px, rgba(201,148,26,.06) 41px);
+    }
+    .hero-inner {
+      position: relative; z-index: 1;
+      text-align: center;
+      padding: 3rem 2rem;
+      max-width: 820px;
+    }
+    .hero-inner img.hero-logo { height: 100px; margin-bottom: 2rem; filter: brightness(0) invert(1); }
+    .hero-tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      font-weight: 700;
+      color: var(--blanc);
+      line-height: 1.15;
+      margin-bottom: 1.2rem;
+    }
+    .hero-tagline span { color: var(--or2); }
+    .hero-sub {
+      font-size: .95rem;
+      color: rgba(255,255,255,.8);
+      font-weight: 300;
+      letter-spacing: .06em;
+      max-width: 500px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.7;
+    }
+    .hero-cta {
+      display: inline-flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+    }
+    .btn {
+      display: inline-block;
+      padding: .75rem 2rem;
+      font-family: 'Raleway', sans-serif;
+      font-size: .82rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: .25s;
+      cursor: pointer;
+    }
+    .btn-or {
+      background: var(--or); color: #fff;
+      border: 2px solid var(--or);
+    }
+    .btn-or:hover { background: var(--or2); border-color: var(--or2); }
+    .btn-outline {
+      background: transparent; color: #fff;
+      border: 2px solid rgba(255,255,255,.6);
+    }
+    .btn-outline:hover { background: rgba(255,255,255,.1); border-color: #fff; }
+
+    /* ─── ACTUALITÉ BANDEAU ─── */
+    .actu-band {
+      background: var(--or);
+      padding: .6rem 5%;
+      display: flex; align-items: center; gap: 1rem;
+      overflow: hidden;
+    }
+    .actu-label {
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #fff;
+      white-space: nowrap;
+      background: var(--vert2);
+      padding: .25rem .7rem;
+      border-radius: 2px;
+    }
+    .actu-ticker {
+      font-size: .82rem;
+      color: #fff;
+      font-weight: 500;
+      white-space: nowrap;
+      animation: ticker 30s linear infinite;
+    }
+    @keyframes ticker {
+      0%   { transform: translateX(100vw); }
+      100% { transform: translateX(-100%); }
+    }
+
+    /* ─── SECTIONS GÉNÉRALES ─── */
+    section { padding: 5rem 5%; }
+    section:nth-child(even) { background: var(--gris); }
+
+    .section-header { text-align: center; margin-bottom: 3.5rem; }
+    .section-label {
+      display: inline-block;
+      font-size: .72rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--or); margin-bottom: .6rem;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 700;
+      color: var(--vert2);
+      line-height: 1.2;
+    }
+    .section-title::after {
+      content: '';
+      display: block;
+      width: 60px; height: 3px;
+      background: var(--or);
+      margin: 1rem auto 0;
+    }
+    .section-desc {
+      margin-top: 1rem;
+      font-size: .92rem;
+      color: #555;
+      max-width: 640px;
+      margin-left: auto; margin-right: auto;
+      line-height: 1.8;
+    }
+
+    /* ─── HISTORIQUE ─── */
+    #historique .timeline {
+      max-width: 820px;
+      margin: 0 auto;
+      position: relative;
+    }
+    #historique .timeline::before {
+      content: '';
+      position: absolute;
+      left: 50%; transform: translateX(-50%);
+      top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--or), var(--vert));
+    }
+    .tl-item {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 2.5rem;
+      align-items: flex-start;
+    }
+    .tl-item:nth-child(even) { flex-direction: row-reverse; }
+    .tl-item:nth-child(even) .tl-content { text-align: right; }
+    .tl-dot {
+      flex-shrink: 0;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--or);
+      border: 3px solid var(--vert2);
+      position: relative; z-index: 1;
+      margin-top: .25rem;
+      align-self: center;
+    }
+    .tl-content { flex: 1; }
+    .tl-year {
+      font-size: .75rem; font-weight: 700; letter-spacing: .12em;
+      color: var(--or); text-transform: uppercase; margin-bottom: .3rem;
+    }
+    .tl-text {
+      font-size: .9rem; line-height: 1.75; color: #444;
+    }
+
+    /* ─── SERVICES ─── */
+    #services .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .card {
+      background: #fff;
+      border-radius: 4px;
+      overflow: hidden;
+      border-left: 4px solid var(--vert);
+      padding: 2rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,.07);
+      transition: transform .25s, box-shadow .25s;
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 8px 28px rgba(0,0,0,.12); }
+    .card-icon {
+      width: 48px; height: 48px;
+      background: var(--vert);
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.2rem;
+      font-size: 1.4rem;
+    }
+    .card-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem; font-weight: 700;
+      color: var(--vert2);
+      margin-bottom: .8rem;
+    }
+    .card ul { padding-left: 1.1rem; }
+    .card ul li {
+      font-size: .85rem; color: #555;
+      line-height: 1.7;
+      margin-bottom: .25rem;
+    }
+    .card ul li::marker { color: var(--or); }
+
+    /* ─── PARTENAIRES ─── */
+    #partenaires .partners-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .partner-item {
+      background: #fff;
+      border: 1px solid #e0e0d8;
+      border-radius: 3px;
+      padding: 1rem 1.2rem;
+      display: flex; align-items: center; gap: .75rem;
+      transition: border-color .2s, background .2s;
+    }
+    .partner-item:hover { border-color: var(--or); background: #fffdf5; }
+    .partner-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--or);
+      flex-shrink: 0;
+    }
+    .partner-name { font-size: .83rem; font-weight: 500; color: #333; line-height: 1.4; }
+
+    /* ─── ACTUALITÉ ─── */
+    #actualite .news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .news-card {
+      background: #fff;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,.07);
+      transition: transform .25s;
+    }
+    .news-card:hover { transform: translateY(-4px); }
+    .news-img {
+      height: 180px;
+      background: linear-gradient(135deg, var(--vert) 0%, var(--vert2) 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3rem;
+    }
+    .news-body { padding: 1.5rem; }
+    .news-date { font-size: .72rem; color: var(--or); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: .5rem; }
+    .news-title { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; font-weight: 700; color: var(--vert2); margin-bottom: .6rem; }
+    .news-excerpt { font-size: .85rem; color: #666; line-height: 1.7; }
+
+    /* ─── CONTACT ─── */
+    #contact .contact-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 3rem;
+    }
+    .contact-info h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem; font-weight: 700; color: var(--vert2);
+      margin-bottom: 1.5rem;
+    }
+    .info-line {
+      display: flex; gap: 1rem; align-items: flex-start;
+      margin-bottom: 1.2rem;
+    }
+    .info-icon {
+      width: 40px; height: 40px;
+      background: var(--vert);
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .info-text { font-size: .88rem; color: #555; line-height: 1.6; }
+    .info-text strong { display: block; font-weight: 600; color: var(--noir); margin-bottom: .1rem; }
+    .contact-form input,
+    .contact-form textarea {
+      width: 100%;
+      padding: .8rem 1rem;
+      border: 1px solid #d0d0c8;
+      border-radius: 3px;
+      font-family: 'Raleway', sans-serif;
+      font-size: .88rem;
+      color: var(--noir);
+      background: #fff;
+      margin-bottom: 1rem;
+      transition: border-color .2s;
+      outline: none;
+    }
+    .contact-form input:focus,
+    .contact-form textarea:focus { border-color: var(--vert); }
+    .contact-form textarea { height: 140px; resize: vertical; }
+    .contact-form .btn { width: 100%; text-align: center; border: none; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--vert2);
+      color: rgba(255,255,255,.7);
+      text-align: center;
+      padding: 2.5rem 5%;
+      font-size: .8rem;
+      line-height: 1.8;
+      border-top: 3px solid var(--or);
+    }
+    footer strong { color: var(--or2); }
+
+    /* ─── MOBILE ─── */
+    @media (max-width: 768px) {
+      nav ul { display: none; position: absolute; top: 72px; left: 0; right: 0; background: var(--vert2); flex-direction: column; padding: 1.5rem 5%; gap: 1.2rem; }
+      nav ul.open { display: flex; }
+      .burger { display: flex; }
+      #contact .contact-wrap { grid-template-columns: 1fr; }
+      #historique .timeline::before { left: 12px; }
+      .tl-item, .tl-item:nth-child(even) { flex-direction: row; }
+      .tl-item:nth-child(even) .tl-content { text-align: left; }
+    }
+  </style>
 </head>
 <body>
-<div class="hero">
-  <div class="hero-badge">Service officiel · Yaoundé, Cameroun</div>
-  <h1>Medi<span>Card</span></h1>
-  <p class="hero-sub">Ma carte de vie — Créez votre fiche médicale personnalisée</p>
-  <div class="steps-bar">
-    <div class="step-item active" id="s1"><div class="step-num">1</div><div class="step-lbl">Identité</div></div>
-    <div class="step-line"></div>
-    <div class="step-item" id="s2"><div class="step-num">2</div><div class="step-lbl">Médical</div></div>
-    <div class="step-line"></div>
-    <div class="step-item" id="s3"><div class="step-num">3</div><div class="step-lbl">Privé</div></div>
-    <div class="step-line"></div>
-    <div class="step-item" id="s4"><div class="step-num">4</div><div class="step-lbl">Prêt</div></div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <img src="data:image/jpeg;base64,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" alt="Logo CCEY-CA"/>
   </div>
+  <ul id="navLinks">
+    <li><a href="#accueil">Accueil</a></li>
+    <li><a href="#historique">Historique</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#partenaires">Partenaires</a></li>
+    <li><a href="#actualite">Actualité</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="burger" onclick="document.getElementById('navLinks').classList.toggle('open')">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="accueil">
+  <div class="hero-pattern"></div>
+  <div class="hero-inner">
+    <div class="hero-tagline">
+      Incubateur d'entreprises<br><span>au service des PME</span><br>camerounaises
+    </div>
+    <p class="hero-sub">
+      Depuis 1989, le CCEY-CA accompagne la création, la croissance et le développement des initiatives économiques viables au Cameroun.
+    </p>
+    <div class="hero-cta">
+      <a href="#services" class="btn btn-or">Nos Services</a>
+      <a href="#contact" class="btn btn-outline">Nous Contacter</a>
+    </div>
+  </div>
+</section>
+
+<!-- BANDEAU ACTUALITÉ -->
+<div class="actu-band">
+  <span class="actu-label">Actualité</span>
+  <span class="actu-ticker">
+    🔸 Appui aux retournés volontaires — Programme en cours &nbsp;&nbsp;&nbsp; 🔸 Accompagnement des promoteurs d'initiatives économiquement viables &nbsp;&nbsp;&nbsp; 🔸 Partenariat renforcé avec l'Union Européenne et la BAD
+  </span>
 </div>
 
-<div class="form-wrap">
-  <div id="formSection">
-
-    <div class="section">
-      <div class="section-head">
-        <div class="section-icon">👤</div>
-        <div class="section-title">Identité personnelle</div>
-        <span class="section-badge libre">Accès libre</span>
-      </div>
-      <div class="section-body">
-        <div class="field-grid" style="margin-bottom:1rem">
-          <div class="field"><label>Nom complet <span class="req">*</span></label><input type="text" id="nom" placeholder="Ex: Roland Djienga"></div>
-          <div class="field"><label>Date de naissance <span class="req">*</span></label><input type="date" id="ddn"></div>
-        </div>
-        <div class="field-grid">
-          <div class="field"><label>Téléphone <span class="req">*</span></label><input type="tel" id="tel" placeholder="658 000 000"></div>
-          <div class="field"><label>Adresse</label><input type="text" id="adresse" placeholder="Yaoundé, Cameroun"></div>
-        </div>
-        <div class="divider">Photo (optionnelle)</div>
-        <div class="upload-zone">
-          <input type="file" accept="image/*" id="photoInput" onchange="previewPhoto(this)">
-          <img class="upload-preview" id="photoPreview" alt="Photo">
-          <div class="upload-icon" id="uploadIcon">📷</div>
-          <div class="upload-text"><strong>Cliquez pour ajouter votre photo</strong><br>Affichée sur votre fiche médicale</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-head">
-        <div class="section-icon">🩸</div>
-        <div class="section-title">Informations médicales</div>
-        <span class="section-badge libre">Accès libre</span>
-      </div>
-      <div class="section-body">
-        <div class="field-grid" style="margin-bottom:1rem">
-          <div class="field"><label>Groupe sanguin <span class="req">*</span></label><select id="groupe"><option value="">Sélectionner...</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option><option>Inconnu</option></select></div>
-          <div class="field"><label>Médecin traitant</label><input type="text" id="medecin" placeholder="Dr. Nom — Téléphone"></div>
-        </div>
-        <div class="field-grid full" style="margin-bottom:1rem">
-          <div class="field"><label>Allergies connues</label><textarea id="allergies" placeholder="Ex: Pénicilline, arachides..."></textarea></div>
-        </div>
-        <div class="field-grid" style="margin-bottom:1rem">
-          <div class="field"><label>Maladies importantes</label><textarea id="maladies" placeholder="Ex: Asthme, diabète..."></textarea></div>
-          <div class="field"><label>Médicaments en cours</label><textarea id="medicaments" placeholder="Ex: Ventoline 100µg..."></textarea></div>
-        </div>
-        <div class="divider">Numéros d'urgence Cameroun</div>
-        <div class="urgence-grid">
-          <div class="urgence-item"><div class="urgence-num">15</div><div class="urgence-lbl">SAMU</div></div>
-          <div class="urgence-item"><div class="urgence-num">18</div><div class="urgence-lbl">Pompiers</div></div>
-          <div class="urgence-item"><div class="urgence-num">17</div><div class="urgence-lbl">Police</div></div>
-          <div class="urgence-item"><div class="urgence-num">112</div><div class="urgence-lbl">Urgences</div></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-head">
-        <div class="section-icon">📞</div>
-        <div class="section-title">Contacts d'urgence</div>
-        <span class="section-badge libre">Accès libre</span>
-      </div>
-      <div class="section-body">
-        <div class="field-grid" style="margin-bottom:1rem">
-          <div class="field"><label>Contact 1 — Nom <span class="req">*</span></label><input type="text" id="c1nom" placeholder="Nom du proche"></div>
-          <div class="field"><label>Contact 1 — Téléphone <span class="req">*</span></label><input type="tel" id="c1tel" placeholder="690 000 000"></div>
-        </div>
-        <div class="field-grid">
-          <div class="field"><label>Contact 2 — Nom</label><input type="text" id="c2nom" placeholder="Nom du proche"></div>
-          <div class="field"><label>Contact 2 — Téléphone</label><input type="tel" id="c2tel" placeholder="691 000 000"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-head">
-        <div class="section-icon">🔐</div>
-        <div class="section-title">Espace privé — Proche de confiance</div>
-        <span class="section-badge prive">Code requis</span>
-      </div>
-      <div class="section-body">
-        <div class="field-grid full" style="margin-bottom:1rem">
-          <div class="field">
-            <label>Code secret <span class="req">*</span></label>
-            <input type="text" id="code" placeholder="Ex: MARIE1990 ou votre mot choisi" maxlength="20">
-            <div class="code-hint">Choisissez un mot que <strong>vous communiquerez uniquement à vos proches de confiance</strong>.</div>
-          </div>
-        </div>
-        <div class="divider">Message personnel</div>
-        <div class="field-grid full" style="margin-bottom:1rem">
-          <div class="field"><label>Message pour vos proches</label><textarea id="message" rows="4" placeholder="Un message que vos proches pourront lire en cas d'urgence..."></textarea></div>
-        </div>
-        <div class="divider">Coffre-fort numérique</div>
-        <div class="field-grid" style="margin-bottom:1rem">
-          <div class="field"><label>N° CNI / Passeport</label><input type="text" id="cni" placeholder="Numéro de pièce d'identité"></div>
-          <div class="field"><label>N° Assurance maladie</label><input type="text" id="assurance" placeholder="Numéro d'assurance"></div>
-        </div>
-        <div class="field-grid full">
-          <div class="field"><label>Informations confidentielles</label><textarea id="confidentiel" placeholder="Autres informations à transmettre à vos proches uniquement..."></textarea></div>
-        </div>
-      </div>
-    </div>
-
-    <button class="btn-submit" id="btnSubmit" onclick="submitForm()">
-      <span>✦</span> Créer ma fiche MediCard
-    </button>
-    <p class="form-note">🔒 Vos données sont protégées. Le code secret n'est jamais partagé.<br>Un service <span>MediCard Cameroun</span> — Yaoundé</p>
+<!-- HISTORIQUE -->
+<section id="historique">
+  <div class="section-header">
+    <span class="section-label">Notre parcours</span>
+    <h2 class="section-title">Notre Historique</h2>
+    <p class="section-desc">Plus de trois décennies d'engagement pour l'entrepreneuriat et le développement des PME au Cameroun.</p>
   </div>
-
-  <div class="success-screen" id="successScreen">
-    <div class="success-ring">✦</div>
-    <h2>Votre fiche est créée</h2>
-    <p>Votre MediCard est prête. Votre lien unique ci-dessous.<br>MediCard Cameroun va créer et livrer votre carte sous 48h.</p>
-    <div class="link-display" id="uniqueLink">—</div>
-    <button class="btn-copy" onclick="copyLink()">Copier le lien</button>
-    <p style="margin-top:2rem;font-size:12px;color:var(--muted);">Conservez ce lien — il donne accès à votre fiche médicale complète.</p>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-content">
+        <div class="tl-year">1989</div>
+        <p class="tl-text">L'incubateur d'entreprises extra muros démarre ses activités comme projet de la Coopération Canada-Cameroun, animé et dirigé par l'Assistance Technique Canadienne.</p>
+      </div>
+      <div class="tl-dot"></div>
+      <div style="flex:1"></div>
+    </div>
+    <div class="tl-item">
+      <div style="flex:1"></div>
+      <div class="tl-dot"></div>
+      <div class="tl-content">
+        <div class="tl-year">1989 – 1995</div>
+        <p class="tl-text">Le pragmatisme des méthodes attire la Caisse Française de Développement (CFD) et l'Administration Générale de la Coopération au Développement (AGCD) belge, impliquant le CCEY dans la gestion du don Belge aux PME Camerounaises et le Revolving Fund Belgo-Camerounais.</p>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-content">
+        <div class="tl-year">Camerounisation</div>
+        <p class="tl-text">Le CCEY est camerounisé sous la forme d'une ONG dénommée <strong>CCEY-CA</strong>, qui conserve et consolide la mission de promotion et de création des PME, ainsi que le soutien à l'expansion de celles présentant un fort potentiel de développement.</p>
+      </div>
+      <div class="tl-dot"></div>
+      <div style="flex:1"></div>
+    </div>
+    <div class="tl-item">
+      <div style="flex:1"></div>
+      <div class="tl-dot"></div>
+      <div class="tl-content">
+        <div class="tl-year">Aujourd'hui</div>
+        <p class="tl-text">Le CCEY-CA collabore avec des cabinets conseils locaux, promeut l'approche camerounaise du management des structures d'appui à la PME, et soutient la réinsertion des expatriés camerounais via des initiatives économiquement viables.</p>
+      </div>
+    </div>
   </div>
-</div>
+</section>
 
-<script>
-var BASE_URL = 'https://rodovodka-ux.github.io/medicard-cameroun';
-var FORMSPREE_URL = 'https://formspree.io/f/mojkrwyp';
-var photoBase64 = null;
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-header">
+    <span class="section-label">Ce que nous offrons</span>
+    <h2 class="section-title">Nos Services</h2>
+    <p class="section-desc">L'Incubateur CCEY-CA offre un ensemble de produits et services adaptés aux besoins identifiés de chaque porteur de projet.</p>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">🚀</div>
+      <div class="card-title">Promoteurs d'initiatives économiques</div>
+      <ul>
+        <li>Accompagnement dans la maturation de l'idée de projet</li>
+        <li>Assistance à l'élaboration du calendrier d'activités</li>
+        <li>Encadrement dans le montage de l'étude de faisabilité</li>
+        <li>Conseil lors des démarches administratives et négociations</li>
+        <li>Financement des projets à même les fonds dédiés</li>
+        <li>Assistance en phase d'implantation et de démarrage</li>
+        <li>Formation des promoteurs et employés</li>
+        <li>Suivi des activités et conseil des opérateurs</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-icon">🏢</div>
+      <div class="card-title">Organismes d'appui à la PME</div>
+      <ul>
+        <li>Collecte et traitement de données du milieu</li>
+        <li>Diagnostic organisationnel des structures d'accompagnement</li>
+        <li>Gestion locale des lignes de financement dédiées</li>
+        <li>Suivi des promoteurs du programme</li>
+        <li>Reportage des activités des structures suivies</li>
+        <li>Études sectorielles approfondies</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-icon">🌍</div>
+      <div class="card-title">Expertise internationale</div>
+      <ul>
+        <li>Formation au plan international</li>
+        <li>Assistance à la réinsertion des expatriés camerounais</li>
+        <li>Accompagnement dans la création d'initiatives viables</li>
+        <li>Partenariats avec des ONG de différents pays</li>
+      </ul>
+    </div>
+  </div>
+</section>
 
-function generateId() {
-  return 'MC' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substr(2,4).toUpperCase();
-}
+<!-- PARTENAIRES -->
+<section id="partenaires">
+  <div class="section-header">
+    <span class="section-label">Ils nous font confiance</span>
+    <h2 class="section-title">Nos Partenaires</h2>
+    <p class="section-desc">L'activité du CCEY-CA est sous-tendue par des protocoles d'entente avec des partenaires multiples et variés.</p>
+  </div>
+  <div class="partners-grid">
+    <div class="partner-item"><div class="partner-dot"></div><div class="partner-name">Fonds de Contrepartie Canada-Cameroun (FDCCC)</div></div>
+    <div class="partner-item"><div class="partner-dot"></div><div class="partner-name">Institut Régional de Coopération Décentralisée (IRCOD)</div></div>
+    <div class="partner-item"><div class="partner-dot"></div><div class="partner-name">pS-Eau / Programme Migration et Initiatives Économiques</div></div>
+    <div class="partner-item"><div class="partner-dot"></div><div class="partner-name">OCIV/ENTREPRENDRE (Belgique)</div></div>
+    <div class="partner-item"><div class="partner-dot"></div><div class="partner-name">CIRE/CREER — Coordination et Initiatives pour Réfugiés</div></div>
+    <div class="partner-item"><div class="partner-dot"></div><div class="partner-name">Cadres Sans Frontières Afrique International (CSFAI)</div></div>
+    <div class="partner-item"><div class="partner-dot"></div><div class="partner-name">Banque Africaine de Développement (BAD) — PAFRA</div></div>
+    <div class="partner-item"><div class="partner-dot"></div><div class="partner-name">Union Européenne</div></div>
+    <div class="partner-item"><div class="partner-dot"></div><div class="partner-name">Maatwerk bij Terugkeer</div></div>
+    <div class="partner-item"><div class="partner-dot"></div><div class="partner-name">Caritas International</div></div>
+    <div class="partner-item"><div class="partner-dot"></div><div class="partner-name">Terre d'asile</div></div>
+    <div class="partner-item"><div class="partner-dot"></div><div class="partner-name">Frontex</div></div>
+  </div>
+</section>
 
-function previewPhoto(input) {
-  if (input.files && input.files[0]) {
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      var p = document.getElementById('photoPreview');
-      var i = document.getElementById('uploadIcon');
-      p.src = e.target.result;
-      p.style.display = 'block';
-      i.style.display = 'none';
-      photoBase64 = e.target.result;
-    };
-    reader.readAsDataURL(input.files[0]);
-  }
-}
+<!-- ACTUALITÉ -->
+<section id="actualite">
+  <div class="section-header">
+    <span class="section-label">Dernières nouvelles</span>
+    <h2 class="section-title">Notre Actualité</h2>
+  </div>
+  <div class="news-grid">
+    <div class="news-card">
+      <div class="news-img">🤝</div>
+      <div class="news-body">
+        <div class="news-date">Programme en cours</div>
+        <div class="news-title">Appui aux retournés volontaires</div>
+        <p class="news-excerpt">Le CCEY-CA accompagne les retournés volontaires dans la création et le développement de leurs initiatives économiques au Cameroun, en partenariat avec des ONG internationales.</p>
+      </div>
+    </div>
+    <div class="news-card">
+      <div class="news-img">📋</div>
+      <div class="news-body">
+        <div class="news-date">Formation continue</div>
+        <div class="news-title">Accompagnement des porteurs de projets</div>
+        <p class="news-excerpt">Des sessions régulières de formation et d'accompagnement sont proposées aux promoteurs d'initiatives économiquement viables dans le cadre de nos programmes de soutien aux PME.</p>
+      </div>
+    </div>
+    <div class="news-card">
+      <div class="news-img">🌱</div>
+      <div class="news-body">
+        <div class="news-date">Partenariat</div>
+        <div class="news-title">Renforcement des partenariats internationaux</div>
+        <p class="news-excerpt">Le CCEY-CA continue de renforcer ses partenariats avec des institutions internationales pour élargir son impact sur le développement des PME camerounaises.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-function updateSteps(s) {
-  for (var i = 1; i <= 4; i++) {
-    var el = document.getElementById('s' + i);
-    el.classList.remove('active', 'done');
-    if (i < s) el.classList.add('done');
-    if (i === s) el.classList.add('active');
-  }
-}
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-header">
+    <span class="section-label">Prenez contact</span>
+    <h2 class="section-title">Nos Contacts</h2>
+  </div>
+  <div class="contact-wrap">
+    <div class="contact-info">
+      <h3>Parlons de votre projet</h3>
+      <div class="info-line">
+        <div class="info-icon">📍</div>
+        <div class="info-text">
+          <strong>Adresse</strong>
+          Yaoundé, Cameroun
+        </div>
+      </div>
+      <div class="info-line">
+        <div class="info-icon">📧</div>
+        <div class="info-text">
+          <strong>Email</strong>
+          contact@ccey-ca.org
+        </div>
+      </div>
+      <div class="info-line">
+        <div class="info-icon">📞</div>
+        <div class="info-text">
+          <strong>Téléphone</strong>
+          +237 000 000 000
+        </div>
+      </div>
+      <div class="info-line">
+        <div class="info-icon">🕐</div>
+        <div class="info-text">
+          <strong>Horaires</strong>
+          Lundi – Vendredi : 8h00 – 17h00
+        </div>
+      </div>
+    </div>
+    <div class="contact-form">
+      <input type="text" placeholder="Votre nom complet"/>
+      <input type="email" placeholder="Votre adresse email"/>
+      <input type="text" placeholder="Sujet de votre demande"/>
+      <textarea placeholder="Décrivez votre projet ou votre demande…"></textarea>
+      <a href="mailto:contact@ccey-ca.org" class="btn btn-or">Envoyer le message</a>
+    </div>
+  </div>
+</section>
 
-function submitForm() {
-  var nom = document.getElementById('nom').value.trim();
-  var ddn = document.getElementById('ddn').value;
-  var tel = document.getElementById('tel').value.trim();
-  var groupe = document.getElementById('groupe').value;
-  var c1nom = document.getElementById('c1nom').value.trim();
-  var c1tel = document.getElementById('c1tel').value.trim();
-  var code = document.getElementById('code').value.trim();
+<!-- FOOTER -->
+<footer>
+  <img src="data:image/jpeg;base64,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" alt="CCEY-CA" style="height:40px;margin-bottom:1rem;filter:brightness(0) invert(1) opacity(.6)"/>
+  <p><strong>CCEY-CA</strong> — Centre de Création d'Entreprises de Yaoundé – Consultants Associés</p>
+  <p>Incubateur d'entreprises · ONG de droit camerounais · Yaoundé, Cameroun</p>
+  <p style="margin-top:1rem;font-size:.72rem;opacity:.5">© 2025 CCEY-CA. Tous droits réservés.</p>
+</footer>
 
-  if (!nom || !ddn || !tel || !groupe || !c1nom || !c1tel) {
-    alert('Veuillez remplir tous les champs obligatoires (*)');
-    return;
-  }
-  if (!code) {
-    alert('Veuillez choisir un code secret.');
-    return;
-  }
-
-  var btn = document.getElementById('btnSubmit');
-  btn.disabled = true;
-  btn.innerHTML = '<span>⏳</span> Création en cours...';
-  updateSteps(4);
-
-  var id = generateId();
-  var ddnFormatted = ddn ? new Date(ddn).toLocaleDateString('fr-FR') : '';
-  var dateAujourd = new Date().toLocaleDateString('fr-FR');
-
-  var data = {
-    id: id,
-    nom: nom,
-    ddn: ddnFormatted,
-    tel: tel,
-    adresse: document.getElementById('adresse').value.trim(),
-    groupe: groupe,
-    medecin: document.getElementById('medecin').value.trim(),
-    allergies: document.getElementById('allergies').value.trim(),
-    maladies: document.getElementById('maladies').value.trim(),
-    medicaments: document.getElementById('medicaments').value.trim(),
-    c1nom: c1nom,
-    c1tel: c1tel,
-    c2nom: document.getElementById('c2nom').value.trim(),
-    c2tel: document.getElementById('c2tel').value.trim(),
-    code: code,
-    message: document.getElementById('message').value.trim(),
-    cni: document.getElementById('cni').value.trim(),
-    assurance: document.getElementById('assurance').value.trim(),
-    confidentiel: document.getElementById('confidentiel').value.trim(),
-    photo: photoBase64,
-    date: dateAujourd,
-    numero_id: id
-  };
-
-  // Sauvegarder localement
-  var all = {};
-  try { all = JSON.parse(localStorage.getItem('medicard_fiches') || '{}'); } catch(e) {}
-  all[id] = data;
-  localStorage.setItem('medicard_fiches', JSON.stringify(all));
-
-  var link = BASE_URL + '/fiche.html?id=' + id;
-
-  // Envoyer email via Formspree
-  fetch(FORMSPREE_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify({
-      nom_client: nom,
-      telephone: tel,
-      groupe_sanguin: groupe,
-      id_fiche: id,
-      lien_fiche: link,
-      date_inscription: dateAujourd,
-      _subject: 'Nouveau client MediCard — ' + nom
-    })
-  }).catch(function(e) { console.log('Formspree:', e); });
-
-  // Afficher succès
-  document.getElementById('uniqueLink').textContent = link;
-  document.getElementById('formSection').style.opacity = '0';
-  setTimeout(function() {
-    document.getElementById('formSection').style.display = 'none';
-    document.getElementById('successScreen').classList.add('show');
-  }, 300);
-}
-
-function copyLink() {
-  var link = document.getElementById('uniqueLink').textContent;
-  navigator.clipboard.writeText(link).then(function() {
-    var b = document.querySelector('.btn-copy');
-    b.textContent = '✓ Copié !';
-    setTimeout(function() { b.textContent = 'Copier le lien'; }, 2000);
-  });
-}
-</script>
 </body>
 </html>
